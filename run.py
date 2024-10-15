@@ -9,6 +9,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--cuda", action='store_true')
 parser.add_argument("--config", type=str, required=True)
 parser.add_argument("--timesteps", type=float, default=1e6)
+parser.add_argument("--disable-early-stopping", default=False, action='store_true')
 args = parser.parse_args()
 
 if not args.cuda:
