@@ -204,6 +204,14 @@ class Trainer:
             else:
                 recover_fn_state = tf.identity
                 recover_fn_obs = tf.identity
+        if 'NASimGymEnv' in env.spec.entry_point:
+            print('Entered if "NASimGymEnv" in env.spec.entry_point')
+            # TODO What do I need to use form the functions here above? How do we select the right one?
+            # TODO Ask Raphael or Florent about this.
+            print(f"{cost_fn=}")
+            cost_fn_obs = get_cost_fn(wae_config['cost_fn'])
+            cost_fn_state = get_cost_fn("binary_cross_entropy")
+            recover_fn_obs = tf.identity
 
 
         wae_worker = WasserteinMDPWorker(

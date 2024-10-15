@@ -63,7 +63,7 @@ def env_maker(env_name: str,
         env = gym.make(env_name) #, with_state=True)
         if isinstance(env, OrderEnforcing):
             env = env.env
-        env = ResetObsWrapperPOMinAtar(env)
+        env = ResetObsWrapperPOMinAtar(env) # Adds the attributes reset_state_obs and reset_state_state
         env = Markovian(env, observability=Observability.FULL_AND_PARTIAL)
     else:
         env = gym.make(env_name)
@@ -91,4 +91,49 @@ def env_maker(env_name: str,
                               init_in_reset_state,
                               reset_state_in_info,
                               reset_state)
+    return env
+
+
+def env_maker_nasim(env_name: str,
+                    p_blank: float = .5,
+                    perturbation: float = 0.75,
+                    recursive_perturbation: bool = True,
+                    enforce_reset_to_null_once: bool = True,
+                    reset_state_pad: float = 1., # Changed to 1 because otherwise we raise the ValueError
+                    init_in_reset_state: bool = False,
+                    reset_state_in_info: bool = True,
+                    max_abs_reward: Optional[float] = None,
+                    ):
+    """Helper function to generate a Network Attack Simulator (NASim)
+    environment
+
+    Args:
+        env_name (str): Name of the environment to create
+    """
+    import gymnasium
+    import nasim
+    from nasim.envs.wrappers import StochasticEpisodeStarts
+    env = gymnasium.make(env_name)
+    env = StochasticEpisodeStarts(env)
+    env = gymnasium.wrappers.StepAPICompatibility(env , output_truncation_bool=False)
+
+    # Copied this code because it looks important, as it is applied to each
+    # and every of their test environments.
+    if not isinstance(env.observation_space, gym.spaces.Dict):
+        env = StateObsWrapper(env)
+ 
+    # I don't really understand this code so I just set them to what I
+    # believe is expected.
+    #reset_state = {"obs": env.reset_state_obs, "state": env.reset_state_state}
+    #print(reset_state)
+    #input()
+    env = PerturbedGymWrapper(env,
+                              perturbation,
+                              recursive_perturbation,
+                              enforce_reset_to_null_once,
+                              reset_state_pad,
+                              init_in_reset_state,
+                              reset_state_in_info)
+                              #reset_state) # We let the reset_state be determined
+                                            # by the wrapper itself
     return env
