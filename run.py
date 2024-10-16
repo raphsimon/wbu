@@ -25,6 +25,7 @@ if __name__ == '__main__':
 
     trainer = Trainer(config,
                       experiment_path=f"{os.path.dirname(__file__)}/experiments",
-                      disable_wandb=True)
+                      disable_wandb=True,
+                      disable_early_stopping=args.disable_early_stopping)
     trainer.train(int(args.timesteps), int(1e4))
 

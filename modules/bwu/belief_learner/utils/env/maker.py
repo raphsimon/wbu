@@ -110,12 +110,10 @@ def env_maker_nasim(env_name: str,
     Args:
         env_name (str): Name of the environment to create
     """
-    import gymnasium
     import nasim
     from nasim.envs.wrappers import StochasticEpisodeStarts
-    env = gymnasium.make(env_name)
+    env = gym.make(env_name)
     env = StochasticEpisodeStarts(env)
-    env = gymnasium.wrappers.StepAPICompatibility(env , output_truncation_bool=False)
 
     # Copied this code because it looks important, as it is applied to each
     # and every of their test environments.
